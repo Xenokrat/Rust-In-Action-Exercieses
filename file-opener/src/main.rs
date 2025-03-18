@@ -1,3 +1,4 @@
+//! Simulating files one step at a time
 #![allow(dead_code)]
 
 use std::fmt;
@@ -9,7 +10,7 @@ pub enum FileState {
     Close,
 }
 
-pub impl Display for FileState {
+impl Display for FileState {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
             FileState::Open => write!(f, "OPEN"),
@@ -18,8 +19,16 @@ pub impl Display for FileState {
     }
 }
 
+/// Represents a "file"
+/// which probalby lives on a file system
+///
+/// # Examples
+///
+/// ```
+/// let f = File::new("f1.txt")
+/// ```
 #[derive(Debug)]
-struct File {
+pub struct File {
     name: String,
     data: Vec<u8>,
     state: FileState,
@@ -32,6 +41,7 @@ impl Display for File {
 }
 
 impl File {
+    /// New files are assumed to be empty, but a name is required
     pub fn new(name: &str) -> File {
         File {
             name: String::from(name),
@@ -40,7 +50,6 @@ impl File {
         }
     }
 
-    #[allow(dead_code)]
     pub fn new_with_data(name: &str, data: &Vec<u8>) -> File {
         let mut f = File::new(name);
         f.data = data.clone();
@@ -57,6 +66,16 @@ impl File {
         save_to.reserve(read_length);
         save_to.append(&mut tmp);
         Ok(read_length)
+    }
+
+    /// Returns the file's length in bytes.
+    pub fn len(&self) -> usize {
+        self.data.len()
+    }
+
+    /// Returns the file's name.
+    pub fn name(&self) -> String {
+        self.name.clone()
     }
 }
 
